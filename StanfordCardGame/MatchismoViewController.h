@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PlayingCard.h"
 
-@interface ViewController : UIViewController
+@interface MatchismoViewController : UIViewController
+
+
 
 @end
