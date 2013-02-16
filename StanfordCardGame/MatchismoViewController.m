@@ -84,6 +84,11 @@
 
 - (IBAction)flipCard:(UIButton *)sender
 {
+    if (self.gameTypeSelectedSegementedControl.enabled)
+    {
+        self.gameTypeSelectedSegementedControl.enabled = NO;
+        
+    }
     self.clickCounter++;
     [self.game flipCardAtIndex:[self.cardButtons indexOfObject:sender]];
     [self updateUI];
@@ -118,7 +123,7 @@
     self.clickCounterLabel.text = @"Clicks: 0";
     self.scoreLabel.text = @"Score: 0";
     self.resultsOfLastFlip.text = @"Click Card to Start Game";
-    //self.twoMatch = YES;
+    self.gameTypeSelectedSegementedControl.enabled = YES;
 }
 
 - (void)setClickCounter:(int)clickCounter

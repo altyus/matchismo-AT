@@ -10,7 +10,7 @@
 
 @interface CardMatchingGame()
 @property (readwrite, nonatomic) int score;
-@property (readwrite, nonatomic) NSString *matchResult;
+@property (readwrite, nonatomic) NSMutableString *matchResult;
 
 @property (strong, nonatomic) NSMutableArray *cards; // of Card
 
@@ -56,63 +56,11 @@
 #define MATCH_BONUS 4
 #define MISMATCH_PENALTY 2
 #define FLIP_COST 1
-/*
--(void)flipCardAtIndex:(NSUInteger)index
-{
-    
-  //  NSLog(@"Card at index 0: %@",[[self.cards objectAtIndex:10] contents]);
-    Card *card = [self cardAtIndex:index];
-    
-    if (card && !card.isUnplayable)
-    {
-        if (!card.isFaceUp)
-        {
-            
-        
-            for (Card *otherCard in self.cards)
-            {
-                if (otherCard.isFaceUp && !otherCard.isUnplayable)
-                {
-                    NSLog(@"otherCard.isFaceUP && !otherCard.isUnplayable");
-                    
-                    int matchScore = [card match:@[otherCard]];
-                    if (matchScore)
-                    {
-                        card.unplayable = YES;
-                        otherCard.unplayable = YES;
-                        self.score += matchScore * MATCH_BONUS;
-                        self.matchResult = [NSString stringWithFormat:@"Matched %@ & %@ for %d points", [card contents], [otherCard contents], MATCH_BONUS];
-                        NSLog(@"Card Contents %@", [card contents]);
-                        
-                    }
-                    else
-                    {
-                        otherCard.faceUp = NO;
-                        self.score -= MISMATCH_PENALTY;
-                        self.matchResult = [NSString stringWithFormat:@"%@ & %@ don't match! %d point penalty!", [card contents], [otherCard contents], MISMATCH_PENALTY];
-                    
-                    }
-                    break;
-                
-                }
-                else if (!otherCard.isFaceUp)
-                {
-                    self.matchResult = [NSString stringWithFormat:@"Flipped up %@", [card contents]];
-                }
-            }
-        self.score -= FLIP_COST;
-        }
-        card.faceUp = !card.isFaceUp;
-        
-    }
-    
-}
-*/
 
 -(void)flipCardAtIndex:(NSUInteger)index
 {
     Card *card = [self cardAtIndex:index];
-    
+    self.matchResult = [[NSMutableString alloc] init];
     //only act if card is playable 
     if (card && !card.isUnplayable)
     {
@@ -145,10 +93,23 @@
                         //make card unplayable
                         card.unplayable = YES;
                         
+                        //add first card to Feedback string
+                        
+                        
+                        [self.matchResult appendFormat:@"Matched %@ ", [card contents]];
+                        
                         //iterate through other cards and set to unplayable
                         for (Card *otherCard in otherCards)
                         {
                             otherCard.unplayable = YES;
+                            // Format Text for not last object 
+                            if (![otherCard isEqual:[otherCards lastObject]])
+                            {
+                                [self.matchResult appendFormat:@"& %@ ", [otherCard contents]];
+                            }
+                            else [self.matchResult appendFormat:@"& %@ for %d points!", [otherCard contents],matchScore * MATCH_BONUS];
+                            
+                            NSLog(@"otherCard = %@", [otherCard contents]);
                         }
                         
                     }
@@ -163,13 +124,22 @@
                         for (Card *otherCard in otherCards)
                         {
                             otherCard.faceUp = NO;
-                            self.matchResult = [NSString stringWithFormat:@"%@ & %@ don't match! %d point penalty!", [card contents], [otherCard contents], MISMATCH_PENALTY];
+                            [self.matchResult appendFormat:@"%@ & %@ don't match! %d point penalty!", [card contents], [otherCard contents], MISMATCH_PENALTY];
                         }
                         
                         
                     }
+                    
             
                 }
+            else
+            {
+                NSLog(@"reset matchresult");
+                [self.matchResult appendFormat:@"Flipped up %@", [card contents]];
+                
+            }
+   
+    //self.matchResult = [NSString stringWithFormat:@"Flipped up %@", [card contents]];
     self.score -= FLIP_COST;
         
         }
