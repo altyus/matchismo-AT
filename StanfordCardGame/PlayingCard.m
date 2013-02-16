@@ -15,19 +15,36 @@
 - (int)match:(NSArray *)otherCards
 {
     int score = 0;
+    int suitMatches = 0;
+    int rankMatches = 0;
     
-    if ([otherCards count] == 1)
+    //iterate through cards in Array and check for rank and suit matches
+    for (Card *otherCard in otherCards)
     {
-        PlayingCard *otherPlayingCard = [otherCards lastObject];
-        if ([otherPlayingCard.suit isEqualToString:self.suit])
-        {
-            score = 1;
-        }
-        else if (otherPlayingCard.rank == self.rank)
-        {
-            score = 4;
-        }
+        //Check if Card is Playing Card
+        if ([otherCard isKindOfClass:[PlayingCard class]])
+             {
+                 PlayingCard *otherPlayingCard = (PlayingCard *)otherCard;
+                 // match suits and ranks
+                 if ([otherPlayingCard.suit isEqualToString:self.suit])
+                      {
+                          suitMatches++;
+                      }
+                 else if (otherPlayingCard.rank == self.rank)
+                      {
+                          rankMatches++;
+                          NSLog(@"Rank Matches = %i", rankMatches);
+                      }
+             }
+        
     }
+    #define RANK_MULTIPLIER  4
+    #define SUIT_MULTIPLIER  2
+    // do all cards match?
+    if (suitMatches == [otherCards count]) score += suitMatches;
+    NSLog(@"rankMatches = %i otherCards count = %i", rankMatches, [otherCards count]);
+    if (rankMatches == [otherCards count]) score += RANK_MULTIPLIER;
+    
    
     
     return score;

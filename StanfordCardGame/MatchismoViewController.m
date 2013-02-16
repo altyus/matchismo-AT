@@ -19,6 +19,9 @@
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
 @property (strong, nonatomic) CardMatchingGame *game;
 
+@property (weak, nonatomic) IBOutlet UISegmentedControl *gameTypeSelectedSegementedControl;
+
+
 @end
 
 @implementation MatchismoViewController
@@ -28,6 +31,8 @@
     if (!_game)
     {
         _game = [[CardMatchingGame alloc]initWithCardCount:[self.cardButtons count] usingDeck:[[PlayingCardDeck alloc]init]];
+        //set initial game mode to twoMatchGame
+        self.game.twoMatchGame = YES;
     }
     return _game;
 }
@@ -36,8 +41,13 @@
 {
     [super viewDidLoad];
     [self resetUI];
-    self.game.twoMatchGame = YES;
+    //self.game.twoMatchGame = YES;
     
+    UIFont *font = [UIFont boldSystemFontOfSize:12.0f];
+    NSDictionary *attributes = [NSDictionary dictionaryWithObject:font
+                                                           forKey:UITextAttributeFont];
+    [self.gameTypeSelectedSegementedControl setTitleTextAttributes:attributes
+                                    forState:UIControlStateNormal];
 }
 
 - (void)setCardButtons:(NSArray *)cardButtons
@@ -48,6 +58,7 @@
 
 - (void)updateUI
 {
+    NSLog(@"self.game.twoMatchGame = %i", self.game.twoMatchGame);
     for (UIButton *cardButton in self.cardButtons)
     {
         Card *card = [self.game cardAtIndex:[self.cardButtons indexOfObject:cardButton]];
@@ -86,11 +97,28 @@
     [self updateUI];
 }
 
+- (IBAction)gameTypeSelected:(UISegmentedControl *)sender
+{
+    if (self.game)
+    {
+        if (sender.selectedSegmentIndex == 0)
+        {
+            self.game.twoMatchGame = YES;
+        }
+        else if (sender.selectedSegmentIndex == 1)
+        {
+            self.game.twoMatchGame = NO;
+        }
+        NSLog(@"self.game.twoMatchGame = %i", self.game.twoMatchGame);
+    }
+}
+
 - (void)resetUI
 {
     self.clickCounterLabel.text = @"Clicks: 0";
     self.scoreLabel.text = @"Score: 0";
     self.resultsOfLastFlip.text = @"Click Card to Start Game";
+    //self.twoMatch = YES;
 }
 
 - (void)setClickCounter:(int)clickCounter
