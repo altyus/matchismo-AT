@@ -124,6 +124,16 @@
     self.scoreLabel.text = @"Score: 0";
     self.resultsOfLastFlip.text = @"Click Card to Start Game";
     self.gameTypeSelectedSegementedControl.enabled = YES;
+    
+    if (self.gameTypeSelectedSegementedControl.selectedSegmentIndex == 0)
+    {
+        self.game.twoMatchGame = YES;
+    }
+    else if (self.gameTypeSelectedSegementedControl.selectedSegmentIndex == 1)
+    {
+        self.game.twoMatchGame = NO;
+    }
+
 }
 
 - (void)setClickCounter:(int)clickCounter
