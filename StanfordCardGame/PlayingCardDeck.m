@@ -27,8 +27,6 @@
                 card.suit = suit;
                 [self addCard:card atTop:YES];
                 
-                //NSLog(@"rank: %lu suit %@", (unsigned long) rank, suit);
-                
             }
         }
         

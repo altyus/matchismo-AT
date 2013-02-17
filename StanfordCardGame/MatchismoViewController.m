@@ -16,7 +16,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UILabel *resultsOfLastFlip;
 @property (nonatomic) int clickCounter;
-@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
+
 @property (strong, nonatomic) CardMatchingGame *game;
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *gameTypeSelectedSegementedControl;
@@ -41,7 +41,6 @@
 {
     [super viewDidLoad];
     [self resetUI];
-    //self.game.twoMatchGame = YES;
     
     UIFont *font = [UIFont boldSystemFontOfSize:12.0f];
     NSDictionary *attributes = [NSDictionary dictionaryWithObject:font
@@ -58,7 +57,6 @@
 
 - (void)updateUI
 {
-    NSLog(@"self.game.twoMatchGame = %i", self.game.twoMatchGame);
     for (UIButton *cardButton in self.cardButtons)
     {
         Card *card = [self.game cardAtIndex:[self.cardButtons indexOfObject:cardButton]];
@@ -125,13 +123,16 @@
     self.resultsOfLastFlip.text = @"Click Card to Start Game";
     self.gameTypeSelectedSegementedControl.enabled = YES;
     
-    if (self.gameTypeSelectedSegementedControl.selectedSegmentIndex == 0)
+    if (self.gameTypeSelectedSegementedControl)
     {
-        self.game.twoMatchGame = YES;
-    }
-    else if (self.gameTypeSelectedSegementedControl.selectedSegmentIndex == 1)
-    {
-        self.game.twoMatchGame = NO;
+        if (self.gameTypeSelectedSegementedControl.selectedSegmentIndex == 0)
+        {
+            self.game.twoMatchGame = YES;
+        }
+        else if (self.gameTypeSelectedSegementedControl.selectedSegmentIndex == 1)
+        {
+            self.game.twoMatchGame = NO;
+        }
     }
 
 }

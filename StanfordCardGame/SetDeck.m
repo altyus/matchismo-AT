@@ -28,10 +28,8 @@
                 card.filled = filled;
                     
                 [self addCard:card atTop:YES];
-                NSLog(@"Color: %@ Shape: %@ Filled: %@", color, shape, filled);
-                }
-                
             
+                }
                 
             }
         }

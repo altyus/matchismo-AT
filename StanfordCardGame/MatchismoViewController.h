@@ -10,7 +10,7 @@
 #import "PlayingCard.h"
 
 @interface MatchismoViewController : UIViewController
-
+@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
 
 
 @end

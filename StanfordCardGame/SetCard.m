@@ -55,7 +55,7 @@
     }
 }
 
-- (void)setCardColor:(NSString *)color
+- (void)setCardColor:(UIColor *)color
 {
     if ([[SetCard validColors] containsObject:color])
     {
@@ -63,19 +63,28 @@
     }
 }
 
+#define MAXSYMBOLS 3
+
++ (int)maxNumberOfSymbols
+{
+    return (NSUInteger) MAXSYMBOLS;
+    
+}
+
 + (NSArray *)validColors
 {
-    return @[@"green",@"red",@"blue"];
+    //return @[@"green",@"red",@"blue"];
+    return @[ [UIColor greenColor], [UIColor redColor], [UIColor blueColor] ];
 }
 
 + (NSArray *)validShapes
 {
-    return @[@"triangle",@"square",@"circle"];
+    return @[@"▲",@"■",@"●"];
 }
 
 + (NSArray *)validFills
 {
-    return @[@"filled",@"unfilled"];
+    return @[@"solid",@"open",@"striped"];
 }
 
 
