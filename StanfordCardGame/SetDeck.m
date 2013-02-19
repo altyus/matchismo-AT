@@ -8,7 +8,11 @@
 
 #import "SetDeck.h"
 #import "SetCard.h"
-
+/*
++ (NSArray *)validShapes;
++ (NSArray *)validColors;
++ (NSArray *)validShades;
+*/
 @implementation SetDeck
 - (id)init
 {
@@ -20,15 +24,18 @@
         {
             for (NSString *shape in [SetCard validShapes])
             {
-                for (NSString *filled in [SetCard validFills])
+                for (NSString *shade in [SetCard validShades])
                 {
-                SetCard *card = [[SetCard alloc]init];
-                card.cardColor = color;
-                card.shape = shape;
-                card.filled = filled;
+                    for (NSInteger counter = 1; counter <= [SetCard maxNumberOfSymbols];  counter++)
+                    {
+                        SetCard *card = [[SetCard alloc]init];
+                        card.color = color;
+                        card.shape = shape;
+                        card.shade = shade;
+                        card.numberOfSymbols = [NSNumber numberWithInt:counter];
+                        [self addCard:card atTop:YES];
+                    }
                     
-                [self addCard:card atTop:YES];
-            
                 }
                 
             }

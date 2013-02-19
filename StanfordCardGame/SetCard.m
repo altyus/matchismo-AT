@@ -11,6 +11,10 @@
 @implementation SetCard
 
 //@synthesize suit = _suit;
+@synthesize color = _color;
+@synthesize shape = _shape;
+@synthesize shade = _shade;
+@synthesize numberOfSymbols = _numberOfSymbols;
 
 - (int)match:(NSArray *)otherCards
 {
@@ -33,18 +37,31 @@
     return score;
 }
 
-- (NSString *)contents
+- (NSDictionary *)contentsDictionary
 {
     
     //return [[self.cardColor] [self.rank] stringByAppendingString:self.suit];
+    NSDictionary *cardContentsDictionary =@{ @"color" : self.color,
+                                             @"shape" : self.shape,
+                                             @"shade" : self.shade,
+                                             @"numberOfSymbols" : self.numberOfSymbols
+                                             };
     
-    return [[self.cardColor stringByAppendingString:self.shape] stringByAppendingString:self.filled];
+    
+    return cardContentsDictionary;
+    
+}
+
+
+- (NSNumber *)numberOfSymbols
+{
+    return _numberOfSymbols.intValue <= [SetCard maxNumberOfSymbols] ? _numberOfSymbols : 0;
 }
 
 
 - (NSString *)color
 {
-    return _cardColor ? _cardColor : @"?";
+    return _color ? _color : @"?";
 }
 
 - (void)setShape:(NSString *)shape
@@ -55,26 +72,25 @@
     }
 }
 
-- (void)setCardColor:(UIColor *)color
+- (void)setColor:(NSString *)color
 {
     if ([[SetCard validColors] containsObject:color])
     {
-        _cardColor = color;
+        _color = color;
     }
 }
 
 #define MAXSYMBOLS 3
 
-+ (int)maxNumberOfSymbols
++ (NSInteger)maxNumberOfSymbols
 {
-    return (NSUInteger) MAXSYMBOLS;
+    return MAXSYMBOLS;
     
 }
 
 + (NSArray *)validColors
 {
-    //return @[@"green",@"red",@"blue"];
-    return @[ [UIColor greenColor], [UIColor redColor], [UIColor blueColor] ];
+    return @[@"green",@"red",@"blue"];
 }
 
 + (NSArray *)validShapes
@@ -82,7 +98,7 @@
     return @[@"▲",@"■",@"●"];
 }
 
-+ (NSArray *)validFills
++ (NSArray *)validShades
 {
     return @[@"solid",@"open",@"striped"];
 }

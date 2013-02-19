@@ -9,11 +9,13 @@
 #import "SetViewController.h"
 #import "SetMatchingGame.h"
 #import "SetDeck.h"
+#import "SetCard.h"
 
 @interface SetViewController ()
 
 @property (strong, nonatomic) SetMatchingGame *game;
 //@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
+
 
 @end
 
@@ -46,33 +48,64 @@
 
 - (void)updateUI
 {
+    //int i=1;
+    //NSLog(@"%i",[self.cardButtons count]);
+    
     for (UIButton *cardButton in self.cardButtons)
     {
+        
+        //NSLog(@"%i",i);
+        //i++;
+        
         Card *card = [self.game cardAtIndex:[self.cardButtons indexOfObject:cardButton]];
         
-        NSLog(@"card contents = %@,", card.contents);
+        NSDictionary *contentsDictionary = [[NSDictionary alloc] initWithDictionary:card.contentsDictionary];
+        NSString *plainString = [card.contentsDictionary valueForKey:@"shape"];
+        NSMutableAttributedString *cardTitleAttributedString = [[NSMutableAttributedString alloc]initWithString:plainString];
+        int len = [[cardTitleAttributedString string] length];
+        NSRange range = NSMakeRange(0, len);
         
-        //set the back image of the card
-        [cardButton setTitle:@"" forState:UIControlStateNormal];
-        //[cardButton setBackgroundImage: [UIImage imageNamed:@"cardBack.png"] forState:UIControlStateNormal];
-        //[cardButton setBackgroundImage: [UIImage imageNamed:@"cardBack.png"] forState:UIControlStateSelected];
-        //[cardButton setBackgroundImage: [UIImage imageNamed:@"cardBack.png"] forState:UIControlStateSelected | UIControlStateDisabled];
+        for (id key in contentsDictionary)
+        {
+            NSString *value = contentsDictionary [key];
+            
+            if ([key isEqualToString:@"numberOfSymbols"])
+            {
+                NSLog(@"numberOfSymbols = %@",contentsDictionary [key]);
+                //int numberOfSymbols = (int)contentsDictionary [key];
+                // NSAttributedString *cardTitleCopyAttributedString = [cardTitleAttributedString copy];
+                
+                //for (int x=0; x<numberOfSymbols; x++) {
+                //[cardTitleAttributedString appendAttributedString:cardTitleCopyAttributedString];
+                //}
+                
+            }
+           
+            
+            if ([[SetCard validColors] containsObject:value] )
+            {
+                NSString *colorString = [value stringByAppendingString:@"Color"];
+                SEL colorSel = NSSelectorFromString(colorString);
+                
+                if ([UIColor respondsToSelector: colorSel])
+                {
+                    UIColor *valueColor  = [UIColor performSelector:colorSel];
+                    [cardTitleAttributedString addAttribute:NSForegroundColorAttributeName value:valueColor range: range];
+                }
+            }
+            
+          
+        }
         
         
-        // set the title of the card
-        [cardButton setTitle:card.contents forState:UIControlStateSelected];
-        [cardButton setTitle:card.contents forState:UIControlStateSelected | UIControlStateDisabled];
-        
-        //cardButton.selected = card.isFaceUp;
-        
-        
-        cardButton.selected = YES;
-        cardButton.enabled = !card.isUnplayable;
-        cardButton.alpha = (card.isUnplayable ? .2 : 1.0);
+        //NSLog(@"cardTitleAttrString = %@",cardTitleAttributedString);
+        [cardButton setAttributedTitle: cardTitleAttributedString  forState:UIControlStateNormal];
+        //[cardButton setAttributedTitle: cardTitleAttributedString  forState:UIControlStateSelected];
+       
     }
-    //self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
-    //self.resultsOfLastFlip.text = self.game.matchResult;
+    
 }
+
 
 
 /*

@@ -10,14 +10,16 @@
 
 @interface SetCard : Card
 
-@property (nonatomic, strong)NSString *filled;
+@property (nonatomic, strong)NSString *shade;
 @property (nonatomic, strong)NSString *shape;
-@property (nonatomic, strong)UIColor *cardColor;
-@property (nonatomic)NSUInteger *numberOfSymbols;
+@property (nonatomic, strong)NSString *color;
+@property (nonatomic, strong)NSNumber *numberOfSymbols;
 
-+ (int)maxNumberOfSymbols;
+//@property (nonatomic, strong) NSDictionary *contentsDictionary;
+
++ (NSInteger)maxNumberOfSymbols;
 + (NSArray *)validShapes;
 + (NSArray *)validColors;
-+ (NSArray *)validFills;
++ (NSArray *)validShades;
 
 @end
