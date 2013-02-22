@@ -12,11 +12,7 @@
 #import "SetCard.h"
 
 @interface SetViewController ()
-
 @property (strong, nonatomic) SetMatchingGame *game;
-//@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
-
-
 @end
 
 @implementation SetViewController
@@ -38,176 +34,89 @@
 	// Do any additional setup after loading the view.
 }
 
-/*
-- (void)setCardButtons:(NSArray *)cardButtons
-{
-    _cardButtons = cardButtons;
-    [self updateUI];
-}
-*/
-
 - (void)updateUI
 {
     
+    //Iterate through buttons in button collection Array
     for (UIButton *cardButton in self.cardButtons)
     {
+        //Create Card Object and set Card's background image
         Card *card = [self.game cardAtIndex:[self.cardButtons indexOfObject:cardButton]];
         [cardButton setBackgroundImage: [UIImage imageNamed:@"playingCardFront.png"] forState:UIControlStateNormal];
         
-        NSDictionary *contentsDictionary = [[NSDictionary alloc] initWithDictionary:card.contentsDictionary];
+        //Create String Object to start building Attributed String
         NSString *plainString = [card.contentsDictionary valueForKey:@"shape"];
-        
         int paddingLength = [[card.contentsDictionary valueForKey:@"numberOfSymbols"] integerValue] ;
-        
         plainString = [plainString stringByPaddingToLength:paddingLength withString:plainString startingAtIndex:0];
                 
-        NSMutableAttributedString *cardTitleAttributedString = [[NSMutableAttributedString alloc]initWithString:plainString];
-        int len = [[cardTitleAttributedString string] length];
-        NSRange range = NSMakeRange(0, len);
+        //set Attributed Title using helperMethod cardTitleAttributedStringHelper
+        [cardButton setAttributedTitle: [self cardTitleAttributedStringHelper:plainString :card]   forState:UIControlStateNormal];
         
-        float alpha = 0;
-        NSNumber *strokeWidth = [[NSNumber alloc]initWithFloat:-4.5];
-        NSString *shadeString = [card.contentsDictionary valueForKey:@"shade"];
-        
-        // set shade 
-        
-        if ([[SetCard validShades] containsObject:shadeString] )
-        {
-            NSLog(@"Shade = %@", shadeString);
-            
-            if ([shadeString isEqualToString:@"striped"])
-            {
-                alpha = .3;
-                
-            }
-            if ([shadeString isEqualToString:@"open"])
-            {
-                alpha = 0;
-            }
-            if ([shadeString isEqualToString:@"solid"])
-            {
-                alpha = 1;
-            }
-        }
-        
-        
-        // set color
-        
-        if ([[SetCard validColors] containsObject:[card.contentsDictionary valueForKey:@"color"]])
-        {
-            
-        }
-        
-        for (id key in contentsDictionary)
-        {
-            NSString *value = contentsDictionary [key];
-            
-            
-        
+        // Set Card Buttons enabled and alpha values 
+        cardButton.selected = card.isFaceUp;
+        cardButton.enabled = !card.isUnplayable;
+        cardButton.alpha = (card.isUnplayable ? 0 : 1.0);
+    
+    }// end for loop
+}
 
-            
-            if ([[SetCard validColors] containsObject:value] )
-            {
-                NSString *colorString = [value stringByAppendingString:@"Color"];
-                SEL colorSel = NSSelectorFromString(colorString);
-                
-                if ([UIColor respondsToSelector: colorSel])
-                {
-                    UIColor *backgroundColor  = [UIColor performSelector:colorSel];
-                    NSLog(@"Alpha = %f", alpha);
-                    UIColor *foregroundColor = [backgroundColor colorWithAlphaComponent:alpha];
-                    
-                    [cardTitleAttributedString addAttribute:NSForegroundColorAttributeName value:foregroundColor range: range];
-                    
-                    [cardTitleAttributedString addAttribute:NSStrokeColorAttributeName value:backgroundColor range: range];
-                    
-                    [cardTitleAttributedString addAttribute:NSStrokeWidthAttributeName value:strokeWidth range:range];
-                }
-            }
-            
-                        
+- (NSAttributedString *)cardTitleAttributedStringHelper: (NSString *)plainString : (Card *)card
+{
+    //Build Attributed String from plain string
+    NSMutableAttributedString *cardTitleAttributedString = [[NSMutableAttributedString alloc]initWithString:plainString];
+    NSRange range = NSMakeRange(0, [[cardTitleAttributedString string] length]);
+    
+    //Define Values for attributes and initialize alpha value
+    float alpha = 0;
+#define STROKEWIDTH -4.5
+#define TRANSLUCENT_ALPHA .3
+#define UNFILLED_ALPHA 0
+#define FILLED_ALPHA 1
+    
+    NSNumber *strokeWidth = [[NSNumber alloc]initWithFloat:STROKEWIDTH];
+    NSString *shadeString = [card.contentsDictionary valueForKey:@"shade"];
+    NSString *colorString = [card.contentsDictionary valueForKey:@"color"];
+    
+    // set shade value
+    
+    if ([[SetCard validShades] containsObject:shadeString] )
+    {
+        if ([shadeString isEqualToString:@"translucent"])
+        {
+            alpha = TRANSLUCENT_ALPHA;
             
         }
-        
-        
-        //NSLog(@"cardTitleAttrString = %@",cardTitleAttributedString);
-        [cardButton setAttributedTitle: cardTitleAttributedString  forState:UIControlStateNormal];
-        //[cardButton setAttributedTitle: cardTitleAttributedString  forState:UIControlStateSelected];
-        
+        if ([shadeString isEqualToString:@"unfilled"])
+        {
+            alpha = UNFILLED_ALPHA;
+        }
+        if ([shadeString isEqualToString:@"filled"])
+        {
+            alpha = FILLED_ALPHA;
+        }
     }
     
-}
-
-
-//- (void)updateUI
-//{
-//    //int i=1;
-//    //NSLog(@"%i",[self.cardButtons count]);
-//    
-//    for (UIButton *cardButton in self.cardButtons)
-//    {
-//        
-//        //NSLog(@"%i",i);
-//        //i++;
-//        
-//        Card *card = [self.game cardAtIndex:[self.cardButtons indexOfObject:cardButton]];
-//        
-//        NSDictionary *contentsDictionary = [[NSDictionary alloc] initWithDictionary:card.contentsDictionary];
-//        NSString *plainString = [card.contentsDictionary valueForKey:@"shape"];
-//        NSMutableAttributedString *cardTitleAttributedString = [[NSMutableAttributedString alloc]initWithString:plainString];
-//        int len = [[cardTitleAttributedString string] length];
-//        NSRange range = NSMakeRange(0, len);
-//        
-//        for (id key in contentsDictionary)
-//        {
-//            NSString *value = contentsDictionary [key];
-//            
-//            if ([key isEqualToString:@"numberOfSymbols"])
-//            {
-//                NSLog(@"numberOfSymbols = %@",contentsDictionary [key]);
-//                //int numberOfSymbols = (int)contentsDictionary [key];
-//                // NSAttributedString *cardTitleCopyAttributedString = [cardTitleAttributedString copy];
-//                
-//                //for (int x=0; x<numberOfSymbols; x++) {
-//                //[cardTitleAttributedString appendAttributedString:cardTitleCopyAttributedString];
-//                //}
-//                
-//            }
-//           
-//            
-//            if ([[SetCard validColors] containsObject:value] )
-//            {
-//                NSString *colorString = [value stringByAppendingString:@"Color"];
-//                SEL colorSel = NSSelectorFromString(colorString);
-//                
-//                if ([UIColor respondsToSelector: colorSel])
-//                {
-//                    UIColor *valueColor  = [UIColor performSelector:colorSel];
-//                    [cardTitleAttributedString addAttribute:NSForegroundColorAttributeName value:valueColor range: range];
-//                }
-//            }
-//            
-//          
-//        }
-//        
-//        
-//        //NSLog(@"cardTitleAttrString = %@",cardTitleAttributedString);
-//        [cardButton setAttributedTitle: cardTitleAttributedString  forState:UIControlStateNormal];
-//        //[cardButton setAttributedTitle: cardTitleAttributedString  forState:UIControlStateSelected];
-//       
-//    }
-//    
-//}
-
-
-/*
-- (void)resetUI
-{
     
-    super.clickCounterLabel.text = @"Clicks: 0";
-    super.scoreLabel.text = @"Score: 0";
-    super.resultsOfLastFlip.text = @"Click Card to Start Game";
-    self.gameTypeSelectedSegementedControl.enabled = YES;
+    // set color
+    
+    if ([[SetCard validColors] containsObject:[card.contentsDictionary valueForKey:@"color"]])
+    {
+        NSString *colorWorkString = [colorString stringByAppendingString:@"Color"];
+        SEL colorSel = NSSelectorFromString(colorWorkString);
+        
+        if ([UIColor respondsToSelector: colorSel])
+        {
+            UIColor *backgroundColor  = [UIColor performSelector:colorSel];
+            UIColor *foregroundColor = [backgroundColor colorWithAlphaComponent:alpha];
+            
+            //add attributes to attributed string
+            [cardTitleAttributedString addAttribute:NSForegroundColorAttributeName value:foregroundColor range: range];
+            [cardTitleAttributedString addAttribute:NSStrokeColorAttributeName value:backgroundColor range: range];
+            [cardTitleAttributedString addAttribute:NSStrokeWidthAttributeName value:strokeWidth range:range];
+        }
+    }// end if
+    
+    return cardTitleAttributedString;
 }
-*/
+
 @end

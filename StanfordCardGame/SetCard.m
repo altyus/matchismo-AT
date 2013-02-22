@@ -100,7 +100,7 @@
 
 + (NSArray *)validShades
 {
-    return @[@"solid",@"open",@"striped"];
+    return @[@"filled",@"unfilled",@"translucent"];
 }
 
 

@@ -54,13 +54,16 @@
 {
     Card *card = [self cardAtIndex:index];
     self.matchResult = [[NSMutableString alloc] init];
+    NSLog(@"You clicked a card!");
     
     //only act if card is playable
     if (card && !card.isUnplayable)
     {
+        NSLog(@"card and card is playable");
         //only act if card is face down 
         if (!card.isFaceUp)
         {
+            NSLog(@"not card is faceup");
             //build an array of cards to match with
             NSMutableArray *otherCards = [[NSMutableArray alloc] init];
             for (Card *otherCard in self.cards)
@@ -73,6 +76,7 @@
             }
             
             //Do we need to match?
+            // Matchismo Match
             if ((self.twoMatchGame && [otherCards count] == 1) || (!self.twoMatchGame && [otherCards count] == 2))
                 {
                     [self matchHelper:card :otherCards];
