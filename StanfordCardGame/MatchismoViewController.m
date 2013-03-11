@@ -12,9 +12,7 @@
 
 @interface MatchismoViewController ()
 
-@property (weak, nonatomic) IBOutlet UILabel *clickCounterLabel;
-@property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
-@property (weak, nonatomic) IBOutlet UILabel *resultsOfLastFlip;
+
 @property (nonatomic) int clickCounter;
 
 @property (strong, nonatomic) CardMatchingGame *game;

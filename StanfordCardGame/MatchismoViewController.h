@@ -11,6 +11,8 @@
 
 @interface MatchismoViewController : UIViewController
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
-
+@property (weak, nonatomic) IBOutlet UILabel *clickCounterLabel;
+@property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
+@property (weak, nonatomic) IBOutlet UILabel *resultsOfLastFlip;
 
 @end

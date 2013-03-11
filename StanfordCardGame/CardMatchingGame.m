@@ -54,7 +54,7 @@
 {
     Card *card = [self cardAtIndex:index];
     self.matchResult = [[NSMutableString alloc] init];
-    NSLog(@"You clicked a card!");
+    //NSLog(@"You clicked a card!");
     
     //only act if card is playable
     if (card && !card.isUnplayable)

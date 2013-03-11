@@ -10,6 +10,7 @@
 #import "SetMatchingGame.h"
 #import "SetDeck.h"
 #import "SetCard.h"
+//#import "MatchismoViewController.h"
 
 @interface SetViewController ()
 @property (strong, nonatomic) SetMatchingGame *game;
@@ -58,6 +59,11 @@
         cardButton.alpha = (card.isUnplayable ? 0 : 1.0);
     
     }// end for loop
+    
+    self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
+    self.resultsOfLastFlip.text = self.game.matchResult;
+    
+    
 }
 
 - (NSAttributedString *)cardTitleAttributedStringHelper: (NSString *)plainString : (Card *)card
@@ -120,3 +126,6 @@
 }
 
 @end
+
+
+//[NSString stringWithFormat:(@"%@ %@ %@ %@", shape,)

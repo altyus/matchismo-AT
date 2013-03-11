@@ -103,6 +103,16 @@
     return @[@"filled",@"unfilled",@"translucent"];
 }
 
+- (NSString *)contents
+{
+    
+    
+    NSArray *setCardContentsArray = [self.contentsDictionary allValues];
+    NSString *setCardContents = [setCardContentsArray componentsJoinedByString:@" "];
+    
+    NSLog(@"%@",setCardContents);
+    return setCardContents;
+}
 
 
 @end
