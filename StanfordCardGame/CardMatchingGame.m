@@ -7,12 +7,14 @@
 //
 
 #import "CardMatchingGame.h"
+#import "CardGameMove.h"
 
 @interface CardMatchingGame()
 @property (readwrite, nonatomic) int score;
-@property (readwrite, nonatomic) NSMutableString *matchResult;
 @property (strong, nonatomic) NSMutableArray *cards; // of Card
+@property (strong, nonatomic) NSDictionary *feedbackDictionary; //Description of FeedBack types 
 
+@property (strong, nonatomic) CardGameMove *move;
 @end
 
 @implementation CardMatchingGame
@@ -22,6 +24,17 @@
     if (!_cards) _cards = [[NSMutableArray alloc]init];
     return _cards;
 }
+
+-(NSMutableArray *)moveHistory
+{
+    if (!_moveHistory)
+    {
+        _moveHistory =[[NSMutableArray alloc] init];
+        
+    }
+    return _moveHistory;
+}
+
 
 // designated initializer 
 -(id)initWithCardCount:(NSUInteger)count usingDeck:(Deck *)deck 
@@ -53,8 +66,6 @@
 -(void)flipCardAtIndex:(NSUInteger)index
 {
     Card *card = [self cardAtIndex:index];
-    self.matchResult = [[NSMutableString alloc] init];
-    //NSLog(@"You clicked a card!");
     
     //only act if card is playable
     if (card && !card.isUnplayable)
@@ -66,6 +77,10 @@
             NSLog(@"not card is faceup");
             //build an array of cards to match with
             NSMutableArray *otherCards = [[NSMutableArray alloc] init];
+            
+            //build an array of all cards flipped up 
+            NSMutableArray *allCardsInPlay = [[NSMutableArray alloc]init];
+            
             for (Card *otherCard in self.cards)
             {
                 //only act if otherCard is FaceUp and playable
@@ -75,26 +90,41 @@
                 }
             }
             
+            allCardsInPlay = [otherCards mutableCopy];
+            [allCardsInPlay addObject:card];
+            
+            
+            
+            //NSLog(@"Number of cards face up %i", [otherCards count]);
+            NSLog(@"Number of cards in allCardsInPlay %i", [allCardsInPlay count]);
+            
+            
             //Do we need to match?
             // Matchismo Match
             if ((self.twoMatchGame && [otherCards count] == 1) || (!self.twoMatchGame && [otherCards count] == 2))
                 {
-                    [self matchHelper:card :otherCards];
+                    [self matchHelper:card :otherCards :self.move :allCardsInPlay];
+                
                 }
             else
             {
-                //NSLog(@"reset matchresult");
-                [self.matchResult appendFormat:@"Flipped up %@", [card contents]];
+                self.move = [[CardGameMove alloc]initWithMoveKind:MoveKindFlipUp
+                                        CardsThatWereFlipped:allCardsInPlay
+                                       scoreDeltaForThisMove:FLIP_COST * -1];
+                [self.moveHistory addObject:self.move];
+                
             }
             
     self.score -= FLIP_COST;
+    
         
         }
         card.faceUp = !card.faceUp;
     }
+    
 }
 
-- (void)matchHelper: (Card *)card :(NSMutableArray *)otherCards
+- (void)matchHelper: (Card *)card :(NSMutableArray *)otherCards :(CardGameMove *)move :(NSArray *)allCardsInPlay
 {
     
     //calculate the match score
@@ -111,44 +141,32 @@
         
         //add first card to Feedback string
         
-        [self.matchResult appendFormat:@"Matched %@ ", [card contents]];
+        move = [[CardGameMove alloc]initWithMoveKind:MoveKindMatchForPoints
+                                CardsThatWereFlipped:allCardsInPlay
+                               scoreDeltaForThisMove:matchScore * MATCH_BONUS];
+        [self.moveHistory addObject:move];
         
         //iterate through other cards and set to unplayable
         for (Card *otherCard in otherCards)
         {
             otherCard.unplayable = YES;
-            // Format Text for not last object
-            if (![otherCard isEqual:[otherCards lastObject]])
-            {
-                [self.matchResult appendFormat:@"& %@ ", [otherCard contents]];
-            }
-            else
-            {
-                [self.matchResult appendFormat:@"& %@ for %d points!", [otherCard contents],matchScore * MATCH_BONUS];
-            }
         }
     }
     //no match and penalize
     else
     {
         self.score -= MISMATCH_PENALTY * [otherCards count];
-
-        //First Feedback line
-        [self.matchResult appendFormat:@"%@ & ", [card contents] ];
+        
+        move = [[CardGameMove alloc]initWithMoveKind:MoveKindMismatchForPenalty
+                                CardsThatWereFlipped:allCardsInPlay
+                               scoreDeltaForThisMove:MISMATCH_PENALTY * [otherCards count]];
+        [self.moveHistory addObject:move];
         
         //iterate over cards that didn't match
         for (Card *otherCard in otherCards)
         {
             otherCard.faceUp = NO;
             //Add feedback to Cards that are not last card in Array
-            if (![otherCard isEqual:[otherCards lastObject]])
-            {
-                [self.matchResult appendFormat:@"%@ & ", [otherCard contents]];
-            }
-            else
-            {
-                [self.matchResult appendFormat:@"%@ don't match, %d point penalty!", [otherCard contents], MISMATCH_PENALTY];
-            }
         }
     }
 }

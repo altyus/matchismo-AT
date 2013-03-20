@@ -9,6 +9,7 @@
 #import "MatchismoViewController.h"
 #import "PlayingCardDeck.h"
 #import "CardMatchingGame.h"
+#import "CardGameMove.h"
 
 @interface MatchismoViewController ()
 
@@ -75,7 +76,10 @@
         cardButton.alpha = (card.isUnplayable ? .2 : 1.0);
     }
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
-    self.resultsOfLastFlip.text = self.game.matchResult;
+    
+    //self.resultsOfLastFlip.text = self.game.matchResult;
+    [self updateResultsOfLastFlipLabel:[self.game.moveHistory lastObject]];
+    
 }
 
 - (IBAction)flipCard:(UIButton *)sender
@@ -133,6 +137,13 @@
         }
     }
 
+}
+- (void)updateResultsOfLastFlipLabel:(CardGameMove *)move
+{
+    //self.resultsOfLastFlip.text = [NSString stringWithFormat:@"Flipped %@", [[self.game cardAtIndex:0] contents] ];
+   // self.resultsOfLastFlip.text = [NSString stringWithFormat:@"Flipped up %@",[self.game]];
+    self.resultsOfLastFlip.text = [move descriptionOfMove];
+    
 }
 
 - (void)setClickCounter:(int)clickCounter

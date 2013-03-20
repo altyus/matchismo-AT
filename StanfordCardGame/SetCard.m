@@ -20,22 +20,84 @@
 {
     int score = 0;
     
-    if ([otherCards count] == 1)
+    bool allNumberOfSymbolsMatch = NO;
+    bool allColorsMatch = NO;
+    bool allShapesMatch = NO;
+    bool allShadesMatch = NO;
+   
+    bool allNumberOfSymbolsDiffer = NO;
+    bool allColorsDiffer = NO;
+    bool allShapesDiffer = NO;
+    bool allShadesDiffer = NO;
+    
+    SetCard *card1 = self;
+    SetCard *card2 = otherCards [0];
+    SetCard *card3 = otherCards [1];
+    
+    //Set Boolean value if all of a property are the same 
+    if (card1.numberOfSymbols == card2.numberOfSymbols && card1.numberOfSymbols == card3.numberOfSymbols)
     {
-        SetCard *otherSetCard = [otherCards lastObject];
-        if ([otherSetCard.shape isEqualToString:self.shape])
-        {
-            score = 1;
-        }
-        else if (otherSetCard.shape == self.shape)
-        {
-            score = 4;
-        }
+        allNumberOfSymbolsMatch = YES;
+    }
+    if ([card1.color isEqualToString:card2.color] && [card1.color isEqualToString:card3.color])
+    {
+        allColorsMatch = YES;
+    }
+    if ([card1.shape isEqualToString:card2.shape] && [card1.shape isEqualToString:card3.shape])
+    {
+        allShapesMatch = YES;
+    }
+    if ([card1.shade isEqualToString:card2.shade] && [card1.shade isEqualToString:card3.shade])
+    {
+        allShadesMatch = YES;
     }
     
+    //Set Boolean value if all of a property are distinct 
+    if (card1.numberOfSymbols != card2.numberOfSymbols && card2.numberOfSymbols != card3.numberOfSymbols && card1.numberOfSymbols != card3.numberOfSymbols)
+    {
+        allNumberOfSymbolsDiffer = YES;
+    }
+    if (![card1.color isEqualToString:card2.color] && ![card2.color isEqualToString:card3.color] && ![card1.color isEqualToString:card3.color])
+    {
+        allColorsDiffer = YES;
+    }
+    if (![card1.shape isEqualToString:card2.shape] && ![card2.shape isEqualToString:card3.shape] && ![card1.shape isEqualToString:card3.shape])
+    {
+        allShapesDiffer = YES;
+    }
+    if (![card1.shade isEqualToString:card2.shade] && ![card2.shade isEqualToString:card3.shade] && ![card1.shade isEqualToString:card3.shade])
+    {
+        allShadesDiffer = YES;
+    }
     
+
+
+    if (!allNumberOfSymbolsMatch && !allNumberOfSymbolsDiffer)
+    {
+        score = 0;
+    }
+    else if (!allColorsMatch && !allColorsDiffer)
+    {
+        score = 0;
+    }
+    else if (!allShapesMatch && !allShapesDiffer)
+    {
+        score = 0;
+    }
+    else if (!allShadesMatch && !allShadesDiffer)
+    {
+        score = 0;
+    }
+    else
+    {
+        score = 1;
+    }
+
+    NSLog(@"Score = %i", score);
     return score;
 }
+
+
 
 - (NSDictionary *)contentsDictionary
 {

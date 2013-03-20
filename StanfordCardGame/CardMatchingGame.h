@@ -21,8 +21,10 @@
 
 @property (readonly, nonatomic) int score;
 
-@property (readonly, nonatomic) NSMutableString *matchResult;
+//@property (readonly, nonatomic) NSMutableString *matchResult;
 
 @property (nonatomic, getter = isTwoMatchGame) BOOL twoMatchGame;
+
+@property (strong, nonatomic)NSMutableArray *moveHistory;
 
 @end

@@ -10,6 +10,7 @@
 #import "SetMatchingGame.h"
 #import "SetDeck.h"
 #import "SetCard.h"
+#import "CardGameMove.h"
 //#import "MatchismoViewController.h"
 
 @interface SetViewController ()
@@ -45,29 +46,39 @@
         Card *card = [self.game cardAtIndex:[self.cardButtons indexOfObject:cardButton]];
         [cardButton setBackgroundImage: [UIImage imageNamed:@"playingCardFront.png"] forState:UIControlStateNormal];
         
-        //Create String Object to start building Attributed String
-        NSString *plainString = [card.contentsDictionary valueForKey:@"shape"];
-        int paddingLength = [[card.contentsDictionary valueForKey:@"numberOfSymbols"] integerValue] ;
-        plainString = [plainString stringByPaddingToLength:paddingLength withString:plainString startingAtIndex:0];
+        
+      
                 
         //set Attributed Title using helperMethod cardTitleAttributedStringHelper
-        [cardButton setAttributedTitle: [self cardTitleAttributedStringHelper:plainString :card]   forState:UIControlStateNormal];
+        [cardButton setAttributedTitle: [self cardTitleAttributedStringHelper:card]   forState:UIControlStateNormal];
         
         // Set Card Buttons enabled and alpha values 
         cardButton.selected = card.isFaceUp;
         cardButton.enabled = !card.isUnplayable;
-        cardButton.alpha = (card.isUnplayable ? 0 : 1.0);
+        cardButton.alpha = (card.isUnplayable ? 0.0 : 1.0);
+        
+        cardButton.alpha = (cardButton.isSelected ? 0.1: 1.0);
     
     }// end for loop
     
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
-    self.resultsOfLastFlip.text = self.game.matchResult;
+    //self.resultsOfLastFlip.text = self.game.matchResult;
+    if ([self.game.moveHistory count])
+    {
+    [self updateResultsOfLastFlipLabel:[self.game.moveHistory lastObject]];
+    }
     
     
 }
 
-- (NSAttributedString *)cardTitleAttributedStringHelper: (NSString *)plainString : (Card *)card
+- (NSAttributedString *)cardTitleAttributedStringHelper: (Card *)card
 {
+    
+    //Create String Object to start building Attributed String
+    NSString *plainString = [card.contentsDictionary valueForKey:@"shape"];
+    int paddingLength = [[card.contentsDictionary valueForKey:@"numberOfSymbols"] integerValue];
+    plainString = [plainString stringByPaddingToLength:paddingLength withString:plainString startingAtIndex:0];
+    
     //Build Attributed String from plain string
     NSMutableAttributedString *cardTitleAttributedString = [[NSMutableAttributedString alloc]initWithString:plainString];
     NSRange range = NSMakeRange(0, [[cardTitleAttributedString string] length]);
@@ -123,6 +134,60 @@
     }// end if
     
     return cardTitleAttributedString;
+}
+
++(NSAttributedString *)attributedResultSeparator
+{
+    return [[NSAttributedString alloc] initWithString:@" & "];
+}
+
+- (void)updateResultsOfLastFlipLabel: (CardGameMove *)move
+{
+    //self.resultsOfLastFlip.text = [move descriptionOfMove];
+    
+    NSMutableAttributedString *result = [[NSMutableAttributedString alloc]init];
+    
+    if (move.moveKind == MoveKindFlipUp)
+    {
+        [result appendAttributedString:[[NSAttributedString alloc]initWithString:@"Flipped Up "]];
+        [result appendAttributedString: [self cardTitleAttributedStringHelper:[move.cardsThatWereFlipped lastObject]]];
+    }
+    else if (move.moveKind == MoveKindMatchForPoints)
+    {
+        [result appendAttributedString:[[NSAttributedString alloc]initWithString:@"Matched "]];
+        
+        //for (Card *card in self.cardsThatWereFlipped)
+        for (int x=0; x < [move.cardsThatWereFlipped count] - 1; x++)
+        {
+            Card *card = move.cardsThatWereFlipped[x];
+            [result appendAttributedString:[self cardTitleAttributedStringHelper:card]];
+            [result appendAttributedString:[SetViewController attributedResultSeparator]];
+            //result = [description stringByAppendingString:[NSString stringWithFormat:@"%@ & ", [self.cardsThatWereFlipped [x] contents]]];
+        }
+        
+        [result appendAttributedString:[self cardTitleAttributedStringHelper:[move.cardsThatWereFlipped lastObject]]];
+        
+        [result appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" for %i points",move.scoreDeltaForThisMove]]];
+
+        //result = [description stringByAppendingString:[NSString stringWithFormat:@"%@ for %i points", [[self.cardsThatWereFlipped lastObject] contents], self.scoreDeltaForThisMove]] ;
+        
+    }
+    else if (move.moveKind == MoveKindMismatchForPenalty)
+    {
+        for (int x=0; x < [move.cardsThatWereFlipped count] - 1; x++)
+        {
+            Card *card = move.cardsThatWereFlipped[x];
+            [result appendAttributedString:[self cardTitleAttributedStringHelper:card]];
+            [result appendAttributedString:[SetViewController attributedResultSeparator]];
+            //result = [description stringByAppendingString:[NSString stringWithFormat:@"%@ & ", [self.cardsThatWereFlipped [x] contents]]];
+        }
+        [result appendAttributedString:[self cardTitleAttributedStringHelper:[move.cardsThatWereFlipped lastObject]]];
+        [result appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" don't match, %i point penalty", move.scoreDeltaForThisMove]]];
+        
+        
+    }
+    self.resultsOfLastFlip.attributedText = result;
+    
 }
 
 @end
